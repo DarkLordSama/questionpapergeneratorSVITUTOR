@@ -1,0 +1,67 @@
+/* General page styling */
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f9;
+  margin: 0;
+  padding: 20px;
+}
+
+/* Title */
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Container box */
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Labels */
+label {
+  font-weight: bold;
+  display: block;
+  margin-top: 12px;
+  color: #222;
+}
+
+/* Inputs, dropdowns, buttons */
+input, select, button {
+  padding: 8px;
+  margin-top: 5px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Button styling */
+button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 15px;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+/* Paper output box */
+.paper {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+  white-space: pre-wrap; /* preserve line breaks */
+  font-family: Consolas, monospace;
+  line-height: 1.5;
+}

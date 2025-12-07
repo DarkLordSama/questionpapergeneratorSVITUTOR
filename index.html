@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Class 10 Question Paper Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Class 10     <!-- Question Counts -->
+Question Paper Generator</h1>
+  <div class="container">
+    <!-- Subject Selection -->
+    <label for="subject">Choose Subject:</label>
+    <select id="subject" onchange="toggleChapter()">
+      <option value="" selected disabled>-- Select Subject --</option>
+      <option value="Physics">Physics</option>
+      <option value="Chemistry">Chemistry</option>
+      <option value="Maths">Maths</option>
+    </select>
+
+    <!-- Chapter Selection (hidden by default, shown dynamically) -->
+    <div id="chapterContainer" style="display:none;">
+      <label for="chapter">Choose Chapter:</label>
+      <select id="chapter"></select>
+    </div>
+
+    <label for="mcqCount">Number of MCQs (max:10):</label>
+    <input id="mcqCount" type="number" min="0" max="100" value="5">
+
+    <label for="shortCount">Number of Short Answer Questions (max:10):</label>
+    <input id="shortCount" type="number" min="0" max="100" value="3">
+
+    <label for="nameCount">Number of "Name the Following" Questions (max:10):</label>
+    <input id="nameCount" type="number" min="0" max="100" value="3">
+
+    <label for="longCount">Number of Long Answer Questions (max:10):</label>
+    <input id="longCount" type="number" min="0" max="100" value="2">
+
+    <!-- Generate Button -->
+    <button onclick="generatePaper()">Generate Question Paper</button>
+
+    <!-- Output -->
+    <div id="paper" class="paper"></div>
+  </div>
+  <script src="script.js"></script>
+  <script src="questionbank.js"></script>
+</body>
+</html>
