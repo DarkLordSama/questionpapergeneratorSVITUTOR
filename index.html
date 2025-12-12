@@ -1,48 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Class 10 Question Paper Generator</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Paper Generator</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            max-width: 700px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        h1 { text-align: center; color: #333; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; font-size: 14px; }
+        select, input[type="number"], input[type="text"], textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #e1e5e9; 
+            border-radius: 8px; 
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        select:focus, input:focus, textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        textarea { height: 100px; resize: vertical; }
+        button { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 15px 30px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            width: 100%; 
+            font-size: 18px; 
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+        button:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        #output { 
+            margin-top: 25px; 
+            padding: 20px; 
+            border: 2px solid #e1e5e9; 
+            border-radius: 10px; 
+            background: #f8f9fa; 
+            max-height: 600px; 
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        .question-section { 
+            margin: 25px 0; 
+            padding: 20px; 
+            border-left: 5px solid #667eea; 
+            background: #f0f4ff;
+            border-radius: 0 8px 8px 0;
+        }
+        .info { background: #d4edda; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #28a745; }
+    </style>
 </head>
 <body>
-  <h1>Class 10     <!-- Question Counts -->
-Question Paper Generator</h1>
-  <div class="container">
-    <!-- Subject Selection -->
-    <label for="subject">Choose Subject:</label>
-    <select id="subject" onchange="toggleChapter()">
-      <option value="" selected disabled>-- Select Subject --</option>
-      <option value="Physics">Physics</option>
-      <option value="Chemistry">Chemistry</option>
-    </select>
+    <div class="container">
+        <h1>📚 Test Paper Generator</h1>
+        
+        <div class="info">
+            <strong>ℹ️ Note:</strong> MCQ/A&R input auto-splits in 8:2 ratio (e.g., 10 = 8 MCQs + 2 A&R)
+        </div>
 
-    <!-- Chapter Selection (hidden by default, shown dynamically) -->
-    <div id="chapterContainer" style="display:none;">
-      <label for="chapter">Choose Chapter:</label>
-      <select id="chapter"></select>
+        <form id="testForm">
+            <div class="form-group">
+                <label for="class">Class:</label>
+                <select id="class" required>
+                    <option value="">Select Class</option>
+                    <option value="10">Class 10</option>
+                    <option value="12">Class 12</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="board">Board:</label>
+                <select id="board" required>
+                    <option value="">Select Board</option>
+                    <option value="CBSE">CBSE</option>
+                    <option value="ICSE">ICSE</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="subject">Subject:</label>
+                <input type="text" id="subject" required placeholder="e.g., Mathematics, Physics, Chemistry">
+            </div>
+
+            <div class="form-group">
+                <label for="chapter">Chapter:</label>
+                <input type="text" id="chapter" required placeholder="e.g., Quadratic Equations, Electrostatics">
+            </div>
+
+            <div class="form-group">
+                <label for="mcq">No. of MCQ/A&R (auto-split 8:2):</label>
+                <input type="number" id="mcq" min="0" max="20" value="10">
+            </div>
+
+            <div class="form-group">
+                <label for="vsa">Very Short Answer (1 mark each):</label>
+                <input type="number" id="vsa" min="0" max="10" value="5">
+            </div>
+
+            <div class="form-group">
+                <label for="sa">Short Answer (3 marks each):</label>
+                <input type="number" id="sa" min="0" max="10" value="4">
+            </div>
+
+            <div class="form-group">
+                <label for="case">Case Based Questions (4 marks each):</label>
+                <input type="number" id="case" min="0" max="5" value="2">
+            </div>
+
+            <div class="form-group">
+                <label for="la">Long Answer (5 marks each):</label>
+                <input type="number" id="la" min="0" max="5" value="3">
+            </div>
+
+            <div class="form-group">
+                <label for="prompt">Optional Custom Prompt:</label>
+                <textarea id="prompt" placeholder="Add specific instructions e.g., 'Focus on numerical problems' or 'Include diagram-based questions'"></textarea>
+            </div>
+
+            <button type="submit" id="generateBtn">🚀 Generate Test Paper</button>
+        </form>
+
+        <div id="output"></div>
     </div>
 
-    <label for="mcqCount">Number of MCQs (max:10):</label>
-    <input id="mcqCount" type="number" min="0" max="100" value="5">
+    <script>
+        const API_KEY = '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';
 
-    <label for="shortCount">Number of Short Answer Questions (max:10):</label>
-    <input id="shortCount" type="number" min="0" max="100" value="3">
+        document.getElementById('testForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const generateBtn = document.getElementById('generateBtn');
+            const output = document.getElementById('output');
+            
+            generateBtn.disabled = true;
+            generateBtn.textContent = '⏳ Generating Test Paper...';
+            output.innerHTML = '<div style="text-align:center;padding:40px;color:#666;">🔄 Creating professional test paper with exact question counts...<br><small>Please wait (30-60 seconds)</small></div>';
+            
+            const formData = {
+                class: document.getElementById('class').value,
+                board: document.getElementById('board').value,
+                subject: document.getElementById('subject').value,
+                chapter: document.getElementById('chapter').value,
+                totalMCQAR: parseInt(document.getElementById('mcq').value),
+                vsa: parseInt(document.getElementById('vsa').value),
+                sa: parseInt(document.getElementById('sa').value),
+                case: parseInt(document.getElementById('case').value),
+                la: parseInt(document.getElementById('la').value),
+                prompt: document.getElementById('prompt').value.trim()
+            };
+            
+            // Calculate MCQ and A&R split (8:2 ratio)
+            const totalMCQAR = formData.totalMCQAR;
+            const numAR = Math.round(totalMCQAR * 2 / 10);  // 20% A&R
+            const numMCQ = totalMCQAR - numAR;               // 80% MCQ
+            
+            // Calculate total marks
+            const totalMarks = (numMCQ * 1) + (numAR * 1) + (formData.vsa * 1) + 
+                              (formData.sa * 3) + (formData.case * 4) + (formData.la * 5);
+            
+            try {
+                const systemPrompt = `You are an expert ${formData.board} Board ${formData.class}th Class ${formData.subject} teacher with 20+ years experience. Create a professional test paper for chapter "${formData.chapter}".
 
-    <label for="nameCount">Number of "Name the Following" Questions (max:10):</label>
-    <input id="nameCount" type="number" min="0" max="100" value="3">
+📋 REQUIRED SPECIFICATIONS:
+- Class: ${formData.class} | Board: ${formData.board} | Subject: ${formData.subject}
+- Chapter: "${formData.chapter}"
+${formData.prompt ? `🎯 Custom Instructions: ${formData.prompt}` : ''}
 
-    <label for="longCount">Number of Long Answer Questions (max:10):</label>
-    <input id="longCount" type="number" min="0" max="100" value="2">
+⚠️ Generate EXACTLY these numbers (NO MORE, NO LESS):
+• ${numMCQ} MCQ questions (1 mark each, 4 options A-D, mark correct with *)
+• ${numAR} Assertion & Reason (A&R) questions (1 mark each, standard CBSE format)
+• ${formData.vsa} Very Short Answer (1 mark each, 1-2 sentences)
+• ${formData.sa} Short Answer (3 marks each, 4-6 sentences)
+• ${formData.case} Case Based Questions (4 marks each, with 4 sub-MCQs)
+• ${formData.la} Long Answer (5 marks each, detailed 8-10 sentences)
 
-    <!-- Generate Button -->
-    <button onclick="generatePaper()">Generate Question Paper</button>
+📄 FORMATTING REQUIREMENTS:
+1. Professional header with Subject, Class, Chapter, Total Marks: ${totalMarks}, Time: 3 Hours
+2. Clear SECTION divisions with marks
+3. Number questions properly (1., 2., etc.)
+4. MCQs: (a) (b) (c) (d) with * for correct
+5. A&R: Standard format - Both A&R correct/code options
+6. ALL ANSWERS in separate "ANSWER KEY" section at end
 
-    <!-- Output -->
-    <div id="paper" class="paper"></div>
-  </div>
-  <script src="script.js"></script>
-  <script src="questionbank.js"></script>
+Generate the COMPLETE test paper NOW in perfect CBSE format.`;
+
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            { role: 'user', content: 'Generate the complete test paper immediately.' }
+                        ],
+                        max_tokens: 6000,
+                        temperature: 0.3
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error ${response.status}: ${errorData.error?.message || 'Unknown error'}`);
+                }
+                
+                const data = await response.json();
+                const generatedPaper = data.choices[0].message.content;
+                
+                output.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px;">
+                        <h3>✅ Test Paper Generated Successfully!</h3>
+                        <p><strong>Class ${formData.class} | ${formData.subject} | ${formData.chapter}</strong></p>
+                        <p>Total Questions: ${totalMCQAR + formData.vsa + formData.sa + formData.case + formData.la} | Total Marks: ${totalMarks}</p>
+                    </div>
+                    <div class="question-section">${generatedPaper}</div>
+                    <div style="text-align:center; margin-top:20px; padding:15px; background:#e9ecef; border-radius:8px;">
+                        <small>💡 Tip: Print this page (Ctrl+P) for clean test paper format</small>
+                    </div>
+                `;
+                
+            } catch (error) {
+                output.innerHTML = `
+                    <div style="background: #f8d7da; color: #721c24; padding: 20px; border-radius: 10px; border-left: 5px solid #dc3545;">
+                        <h4>❌ Error Generating Paper</h4>
+                        <p><strong>${error.message}</strong></p>
+                        <p>🔧 Troubleshooting:</p>
+                        <ul>
+                            <li>Check your internet connection</li>
+                            <li>Verify API key is correct</li>
+                            <li>Ensure sufficient OpenAI quota</li>
+                            <li>Try reducing question counts</li>
+                        </ul>
+                    </div>
+                `;
+                console.error('Generation Error:', error);
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = '🚀 Generate Test Paper';
+            }
+        });
+    </script>
 </body>
-
 </html>
